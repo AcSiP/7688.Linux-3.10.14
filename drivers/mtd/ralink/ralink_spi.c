@@ -48,20 +48,20 @@ static struct mtd_partition rt2880_partitions[] = {
      },
      {
             name:           "Bootloader",
-            size:           MTD_BOOT_PART_SIZE,
+            size:           0x30000,
             offset:         0,
      }, {
             name:           "Config",
-            size:           MTD_CONFIG_PART_SIZE,
+            size:           0x10000,
             offset:         MTDPART_OFS_APPEND
      }, {
             name:           "Factory",
-            size:           MTD_FACTORY_PART_SIZE,
+            size:           0x10000,
             offset:         MTDPART_OFS_APPEND
      }, {
             name:           "firmware",
-            size:           0x800000,
-            offset:         0x50000,
+            size:           MTDPART_SIZ_FULL,
+            offset:         MTDPART_OFS_APPEND,
      }
 };
 

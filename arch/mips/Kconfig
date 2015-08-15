@@ -112,6 +112,13 @@ config RALINK_MT7628
          Ralink evaluation board based on MT7628
 endchoice
 
+config MACHINE_NAME
+	string "Entry your machine name"
+	default "Unknown"
+	help
+	 Entry the machine's name that your board or needed.
+	 If you do not, it will use default value "Unknown".
+
 source "arch/mips/ralink/Kconfig"
 
 

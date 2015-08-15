@@ -2,6 +2,7 @@
 # Makefile for the WatchDog device drivers.
 #
 
+EXTRA_CFLAGS=-Iarch/mips/ralink
 # The WatchDog Timer Driver Core.
 watchdog-objs	+= watchdog_core.o watchdog_dev.o
 obj-$(CONFIG_WATCHDOG_CORE)	+= watchdog.o

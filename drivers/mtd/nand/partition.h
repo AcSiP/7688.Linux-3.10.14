@@ -44,7 +44,7 @@ static struct mtd_partition g_pasStatic_Partition[] = {
 	        offset:         MTDPART_OFS_APPEND
 	}, {
 	        name:           "firmware",
-	        size:           0x800000,
+	        size:           MTDPART_SIZ_FULL,
 	        offset:         0x140000,
 	},
 };

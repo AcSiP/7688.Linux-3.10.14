@@ -23,7 +23,7 @@
 #include <asm/page.h>
 #include <asm/prom.h>
 
-static char mips_machine_name[64] = "Unknown";
+static char mips_machine_name[64] = CONFIG_MACHINE_NAME;
 
 __init void mips_set_machine_name(const char *name)
 {

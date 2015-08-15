@@ -138,27 +138,27 @@ const unsigned int nand_size_map[2][3] = {{25, 30, 30}, {20, 27, 30}};
 #if defined (CONFIG_SUPPORT_OPENWRT)
 static struct mtd_partition rt2880_partitions[] = {
 	{
-                name:           "ALL",
-                size:           MTDPART_SIZ_FULL,
-                offset:         0,
-        },
+				name:		   "ALL",
+				size:		   MTDPART_SIZ_FULL,
+				offset:		   0,
+	},
 	/* Put your own partition definitions here */
-        {
-                name:           "Bootloader",
-                size:           NAND_MTD_BOOT_PART_SIZE,
-                offset:         0,
-        }, {
-                name:           "Config",
-                size:           NAND_MTD_CONFIG_PART_SIZE,
-                offset:         MTDPART_OFS_APPEND
-        }, {
-                name:           "Factory",
-                size:           NAND_MTD_FACTORY_PART_SIZE,
-                offset:         MTDPART_OFS_APPEND
+	{
+				name:		   "Bootloader",
+				size:		   NAND_MTD_BOOT_PART_SIZE,
+				offset:		   0,
 	}, {
-	        name:           "firmware",
-	        size:           0x6C0000,
-	        offset:         0x140000,
+				name:		   "Config",
+				size:		   NAND_MTD_CONFIG_PART_SIZE,
+				offset:		   MTDPART_OFS_APPEND
+	}, {
+				name:		   "Factory",
+				size:		   NAND_MTD_FACTORY_PART_SIZE,
+				offset:		   MTDPART_OFS_APPEND
+	}, {
+				name:		   "firmware",
+				size:		   MTDPART_SIZ_FULL,
+				offset:		   0x140000,
 	}, 
 };
 #else /* CONFIG_SUPPORT_OPENWRT */

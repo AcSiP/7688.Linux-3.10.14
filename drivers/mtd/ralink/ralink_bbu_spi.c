@@ -46,27 +46,27 @@
 #if defined(CONFIG_SUPPORT_OPENWRT)
 static struct mtd_partition rt2880_partitions[] = {
 	{
-                name:           "ALL",
-                size:           MTDPART_SIZ_FULL,
-                offset:         0,
-        },
+				name:		 "ALL",
+				size:		 MTDPART_SIZ_FULL,
+				offset:		 0,
+	},
 	/* Put your own partition definitions here */
-        {
-                name:           "Bootloader",
-                size:           MTD_BOOT_PART_SIZE,
-                offset:         0,
-        }, {
-                name:           "Config",
-                size:           MTD_CONFIG_PART_SIZE,
-                offset:         MTDPART_OFS_APPEND
-        }, {
-                name:           "Factory",
-                size:           MTD_FACTORY_PART_SIZE,
-                offset:         MTDPART_OFS_APPEND
+	{
+				name:		 "Bootloader",
+				size:		 0x30000,
+				offset:		 0,
 	}, {
-	        name:           "firmware",
-	        size:           0x800000,
-	        offset:         0x50000,
+				name:		 "Config",
+				size:		 0x10000,
+				offset:		 MTDPART_OFS_APPEND
+	}, {
+				name:		 "Factory",
+				size:		 0x10000,
+				offset:		 MTDPART_OFS_APPEND
+	}, {
+				name:		 "firmware",
+				size:		 MTDPART_SIZ_FULL,
+				offset:		 MTDPART_OFS_APPEND
 	}
 };
 #else /* CONFIG_SUPPORT_OPENWRT */
