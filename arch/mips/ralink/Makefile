@@ -8,10 +8,10 @@
 ###############################################################################
 
 
-.S.s:
-	$(CPP) $(CFLAGS) $< -o $*.s
-.S.o:
-	$(CC) $(CFLAGS) -c $< -o $*.o
+#.S.s:
+#	$(CPP) $(CFLAGS) $< -o $*.s
+#.S.o:
+#	$(CC) $(CFLAGS) -c $< -o $*.o
 
 obj-y    := reset.o init.o irq.o \
             memory.o printf.o cmdline.o setup.o time.o dev-i2c.o
@@ -23,7 +23,7 @@ endif
 obj-$(CONFIG_KERNEL_NVRAM) += nvram.o
 obj-$(CONFIG_PCI) += pci.o
 obj-$(CONFIG_DWC_OTG) += lm.o
-obj-$(CONFIG_RALINK_TIMER_WDG) +=  ralink_wdt.o
+obj-$(CONFIG_RALINK_TIMER_WDG) +=  ralink_kwdt.o
 obj-$(CONFIG_RALINK_TIMER_DFS) +=  rt_timer.o
 obj-$(CONFIG_RT_DMA) +=  dev-dma.o
 obj-$(CONFIG_MTK_MTD_NAND) +=  dev-nand.o
