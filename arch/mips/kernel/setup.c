@@ -646,11 +646,6 @@ static void __init arch_mem_init(char **cmdline_p)
 	}
 
 	bootmem_init();
-#if defined(CONFIG_RALINK_MT7621)
-#if defined(CONFIG_RT2880_DRAM_512M)
-	reserve_bootmem(0x1c000000, 64*1024*1024, BOOTMEM_DEFAULT);
-#endif
-#endif
 
 #ifdef CONFIG_PROC_VMCORE
 	if (setup_elfcorehdr && setup_elfcorehdr_size) {

@@ -43,9 +43,10 @@
 #include <linux/ioport.h>
 #include <asm/bootinfo.h>
 #include <asm/page.h>
+#include <linux/sizes.h>
 
 #include <asm/mach-ralink/prom.h>
-//#define DEBUG
+#undef DEBUG
 
 enum surfboard_memtypes {
 	surfboard_dontuse,
@@ -98,18 +99,17 @@ struct prom_pmemblock * __init prom_getmdesc(void)
 #ifdef DEBUG
 		prom_printf("ramsize = %s\n", env_str);
 #endif
-		ramsize = simple_strtol(env_str, NULL, 0);
+		ramsize = memparse(env_str, NULL);
 	}
 
 	env_str = prom_getenv("rambase");
 	if (!env_str) {
 #if defined(CONFIG_RT2880_ASIC) || defined(CONFIG_RT2880_FPGA)
-		prom_printf("rambase not set, set to default (0x08000000)\n");
 		rambase = 0x08000000;
 #else
-		prom_printf("rambase not set, set to default (0x00000000)\n");
 		rambase = 0x00000000;
 #endif 
+		prom_printf("rambase not set, set to default (0x%08x)\n", rambase);
 	} else {
 #ifdef DEBUG
 		prom_printf("rambase = %s\n", env_str);
@@ -123,9 +123,17 @@ struct prom_pmemblock * __init prom_getmdesc(void)
 	mdesc[0].base = rambase;
 	mdesc[0].size = ramsize;
 
+#if defined(CONFIG_MT7621_ASIC)
+	if (ramsize > 448 * SZ_1M){
+		mdesc[0].size = 448 * SZ_1M;
+		mdesc[1].type = surfboard_ram;
+		mdesc[1].base = 0x20000000;
+		mdesc[1].size = 64 * SZ_1M;
+	}
+#endif
+
 	return &mdesc[0];
 }
-#if 0
 static int __init prom_memtype_classify (unsigned int type)
 {
 	switch (type) {
@@ -137,32 +145,16 @@ static int __init prom_memtype_classify (unsigned int type)
 		return BOOT_MEM_RESERVED;
 	}
 }
-#endif
 
 void __init prom_meminit(void)
 {
-	//struct prom_pmemblock *p;
+	struct prom_pmemblock *p;
 #ifdef DEBUG
 	struct prom_pmemblock *psave;
 #endif
 
-	//printk("ram start= %x, ram end= %x\n",rt2880_res_ram.start, rt2880_res_ram.end); 
-	//printk("size = %x\n",rt2880_res_ram.end - rt2880_res_ram.start); 
- 	//add_memory_region(0x0a000000, rt2880_res_ram.end - rt2880_res_ram.start, BOOT_MEM_RAM);
-#if defined(CONFIG_RT2880_ASIC) || defined(CONFIG_RT2880_FPGA)
- 	add_memory_region(0x08000000, RAM_SIZE, BOOT_MEM_RAM);
-#elif defined(CONFIG_MT7621_ASIC) || defined(CONFIG_MT7621_FPGA)
-#if defined (CONFIG_RT2880_DRAM_512M)
- 	add_memory_region(0x00000000, RAM_SIZE + 64*1024*1024, BOOT_MEM_RAM);
-#else
- 	add_memory_region(0x00000000, RAM_SIZE, BOOT_MEM_RAM);
-#endif
-
-#else
-        add_memory_region(0x00000000, RAM_SIZE, BOOT_MEM_RAM);
-#endif
 	
-	//p = prom_getmdesc();
+	p = prom_getmdesc();
 #ifdef DEBUG
 	prom_printf("MEMORY DESCRIPTOR dump:\n");
 	psave = p;	/* Save p */
@@ -176,7 +168,6 @@ void __init prom_meminit(void)
 	p = psave;	/* Restore p */
 
 #endif
-#if 0
 	while (p->size) {
 		long type;
 		unsigned long base, size;
@@ -187,7 +178,6 @@ void __init prom_meminit(void)
 		add_memory_region(base, size, type);
                 p++;
 	}
-#endif
 }
 
 void __init prom_free_prom_memory(void)

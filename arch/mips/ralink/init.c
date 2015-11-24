@@ -74,7 +74,7 @@ int *_prom_argv, *_prom_envp;
  * YAMON (32-bit PROM) pass arguments and environment as 32-bit pointer.
  * This macro take care of sign extension, if running in 64-bit mode.
  */
-#define prom_envp(index) ((char *)(((int *)(int)_prom_envp)[(index)]))
+#define prom_envp(index) ((char *)(((char **)_prom_envp)[(index)]))
 
 int init_debug = 0;
 
@@ -87,16 +87,13 @@ char *prom_getenv(char *envname)
 	 * workarounds, if we are running in 64-bit mode.
 	 */
 	int i, index=0;
-	// Dennis Lee +
-	return NULL;
-	// 
 	i = strlen(envname);
 
 	while (prom_envp(index)) {
 		if(strncmp(envname, prom_envp(index), i) == 0) {
-			return(prom_envp(index+1));
+			return(prom_envp(index) + i + 1);
 		}
-		index += 2;
+		index++;
 	}
 
 	return NULL;
@@ -768,11 +765,9 @@ __init void prom_init(void)
 	int result __maybe_unused;
 #endif
 
-#ifdef CONFIG_UBOOT_CMDLINE
 	prom_argc = (int)fw_arg0;
 	_prom_argv = (int *)fw_arg1;
 	_prom_envp = (int *)fw_arg2;
-#endif
 
 	prom_init_cmdline();
 
@@ -783,17 +778,12 @@ __init void prom_init(void)
 	serial_init(57600);
 
 	prom_init_serial_port();  /* Needed for Serial Console */
+	prom_setup_printf(prom_get_ttysnum());
+	prom_printf("\nLINUX started...\n");
 
 	prom_meminit();
 	prom_usbinit();		/* USB power saving*/
 	prom_pcieinit();	/* PCIe power saving*/
-	prom_setup_printf(prom_get_ttysnum());
-	prom_printf("\nLINUX started...\n");
-#if defined(CONFIG_RT2880_FPGA) || defined(CONFIG_RT3052_FPGA) || defined(CONFIG_RT3352_FPGA) || defined(CONFIG_RT2883_FPGA) || defined(CONFIG_RT3883_FPGA) || defined(CONFIG_RT5350_FPGA) || defined (CONFIG_RT6855_FPGA) || defined(CONFIG_MT7620_FPGA) || defined (CONFIG_MT7621_FPGA) || defined (CONFIG_MT7628_FPGA)
-	prom_printf("\n THIS IS FPGA\n");
-#elif defined(CONFIG_RT2880_ASIC) || defined(CONFIG_RT3052_ASIC) || defined(CONFIG_RT3352_ASIC) || defined (CONFIG_RT2883_ASIC) || defined (CONFIG_RT3883_ASIC) || defined (CONFIG_RT5350_ASIC) || defined (CONFIG_RT6855_ASIC) || defined (CONFIG_MT7620_ASIC) || defined (CONFIG_MT7621_ASIC) || defined (CONFIG_MT7628_ASIC)
-	prom_printf("\n THIS IS ASIC\n");
-#endif
 
 #if defined (CONFIG_IRQ_GIC)
 
