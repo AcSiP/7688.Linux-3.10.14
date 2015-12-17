@@ -24,7 +24,7 @@
 
 static int xfrm_output2(struct sk_buff *skb);
 
-static int xfrm_skb_check_space(struct sk_buff *skb)
+int xfrm_skb_check_space(struct sk_buff *skb)
 {
 	struct dst_entry *dst = skb_dst(skb);
 	int nhead = dst->header_len + LL_RESERVED_SPACE(dst->dev)
@@ -41,7 +41,7 @@ static int xfrm_skb_check_space(struct sk_buff *skb)
 	return pskb_expand_head(skb, nhead, ntail, GFP_ATOMIC);
 }
 
-static int xfrm_output_one(struct sk_buff *skb, int err)
+int xfrm_output_one(struct sk_buff *skb, int err)
 {
 	struct dst_entry *dst = skb_dst(skb);
 	struct xfrm_state *x = dst->xfrm;
@@ -243,4 +243,6 @@ int xfrm_inner_extract_output(struct xfrm_state *x, struct sk_buff *skb)
 }
 
 EXPORT_SYMBOL_GPL(xfrm_output);
+EXPORT_SYMBOL_GPL(xfrm_output_one);
+EXPORT_SYMBOL_GPL(xfrm_skb_check_space);
 EXPORT_SYMBOL_GPL(xfrm_inner_extract_output);

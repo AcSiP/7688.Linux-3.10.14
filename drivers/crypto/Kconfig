@@ -18,7 +18,7 @@ config CRYPTO_DEV_PADLOCK
 	  (so called VIA PadLock ACE, Advanced Cryptography Engine)
 	  that provides instructions for very fast cryptographic
 	  operations with supported algorithms.
-	  
+
 	  The instructions are used only when the CPU supports them.
 	  Otherwise software encryption is used.
 
@@ -385,5 +385,12 @@ config CRYPTO_DEV_ATMEL_SHA
 
 	  To compile this driver as a module, choose M here: the module
 	  will be called atmel-sha.
+
+config CRYPTO_DEV_MTK_AES
+	tristate "Support for MediaTek AES Engine "
+	depends on RALINK_MT7628
+	help
+	 Turn on the configuration will include MediaTek AES Engine driver.
+
 
 endif # CRYPTO_HW
