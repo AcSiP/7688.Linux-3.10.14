@@ -640,6 +640,16 @@ __init int prom_init_serial_port(void)
    * baud rate = system clock freq / (CLKDIV * 16)
    * CLKDIV=system clock freq/16/baud rate
    */
+	// set Bit2/3=1, Bit26/27=0 for UART2_MODE setting
+	u32 reg = 0;
+	reg = (*((volatile u32 *)(RALINK_SYSCTL_BASE + 0x60))); /* GPIO1 Mode Address */
+    reg |= 0x0000000C; /* set bit2 & bit3 = 1, UART2 */
+	reg &= 0xF3FFFFFF; /* set bit26 & bit27 = 0, UART-Lite#2 */
+	(*((volatile u32 *)(RALINK_SYSCTL_BASE + 0x60))) = reg;
+	
+
+
+
   memset(serial_req, 0, 2*sizeof(struct uart_port));
 
   serial_req[0].type       = PORT_16550A;
@@ -665,7 +675,8 @@ __init int prom_init_serial_port(void)
 
   serial_req[1].type       = PORT_16550A;
   serial_req[1].line       = 1;
-  serial_req[1].irq        = SURFBOARDINT_UART1;
+  
+  serial_req[1].irq        = SURFBOARDINT_UART_LITE3;//which means HDK's UART2
   serial_req[1].flags      = UPF_FIXED_TYPE;
 #if defined (CONFIG_RALINK_RT3883) || defined (CONFIG_RALINK_RT3352) ||  defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_RT6855) || defined (CONFIG_RALINK_MT7620) || defined (CONFIG_RALINK_MT7628)
   serial_req[1].uartclk    = 40000000;
@@ -681,8 +692,8 @@ __init int prom_init_serial_port(void)
   serial_req[1].iotype     = UPIO_AU;
 #endif
   serial_req[1].regshift   = 2;
-  serial_req[1].mapbase    = RALINK_UART_LITE_BASE;
-  serial_req[1].membase    = ioremap_nocache(RALINK_UART_LITE_BASE, PAGE_SIZE);
+  serial_req[1].mapbase    = RALINK_UART_LITE3_BASE;//which means HDK's UART2
+  serial_req[1].membase    = ioremap_nocache(RALINK_UART_LITE3_BASE, PAGE_SIZE);//which means HDK's UART2
 
   early_serial_setup(&serial_req[0]);
   early_serial_setup(&serial_req[1]);
@@ -734,12 +745,24 @@ static void serial_setbrg(unsigned long wBaud)
         LCR(RALINK_SYSCTL_BASE + 0xC00) = UART_LCR_WLEN8;
 
 #if defined (CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_MT7628)
+		
+#if 0//which means HDK's UART0
         IER(RALINK_SYSCTL_BASE + 0xD00) = 0;
         FCR(RALINK_SYSCTL_BASE + 0xD00) = 0;
         LCR(RALINK_SYSCTL_BASE + 0xD00) = (UART_LCR_WLEN8 | UART_LCR_DLAB);
         DLL(RALINK_SYSCTL_BASE + 0xD00) = clock_divisor & 0xff;
         DLM(RALINK_SYSCTL_BASE + 0xD00) = clock_divisor >> 8;
-        LCR(RALINK_SYSCTL_BASE + 0xD00) = UART_LCR_WLEN8;
+        LCR(RALINK_SYSCTL_BASE + 0xD00) = UART_LCR_WLEN8;                  
+#else//HDK's UART2
+	
+        IER(RALINK_SYSCTL_BASE + 0xE00) = 0;
+        FCR(RALINK_SYSCTL_BASE + 0xE00) = 0;
+        LCR(RALINK_SYSCTL_BASE + 0xE00) = (UART_LCR_WLEN8 | UART_LCR_DLAB);
+        DLL(RALINK_SYSCTL_BASE + 0xE00) = clock_divisor & 0xff;
+        DLM(RALINK_SYSCTL_BASE + 0xE00) = clock_divisor >> 8;
+        LCR(RALINK_SYSCTL_BASE + 0xE00) = UART_LCR_WLEN8                        ;
+#endif
+
 #else
 	IER(RALINK_SYSCTL_BASE + 0x500) = 0;
         FCR(RALINK_SYSCTL_BASE + 0x500) = 0;

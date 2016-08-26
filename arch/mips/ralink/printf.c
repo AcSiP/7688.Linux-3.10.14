@@ -88,8 +88,10 @@ char getPromChar(void)
 
 void __init prom_setup_printf(int tty_no)
 {
-	if (tty_no == 1)
-		uart_base = RALINK_UART_LITE_BASE;
+	if (tty_no == 1){
+	
+		uart_base = RALINK_UART_LITE3_BASE;//which means HDK's UART2
+	}
 	else	/* Default = ttys0 */
 		uart_base = RALINK_UART_BASE;
 }

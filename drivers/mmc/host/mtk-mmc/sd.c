@@ -563,7 +563,7 @@ static void msdc_tasklet_card(struct work_struct *work)
         inserted = hw->get_cd_status();
     } else {
         status = sdr_read32(MSDC_PS);
-        inserted = (status & MSDC_PS_CDSTS) ? 0 : 1;
+        inserted = (status & MSDC_PS_CDSTS) ? 1 : 0;
     }
 
 #if 0
@@ -2305,7 +2305,7 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
 #if 0        
         present = host->card_inserted;  /* why not read from H/W: Fix me*/
 #else
-        present = (sdr_read32(MSDC_PS) & MSDC_PS_CDSTS) ? 0 : 1; 
+        present = (sdr_read32(MSDC_PS) & MSDC_PS_CDSTS) ? 1 : 0; 
         host->card_inserted = present;  
 #endif        
         spin_unlock_irqrestore(&host->lock, flags);
@@ -3000,7 +3000,10 @@ static int __init mt_msdc_init(void)
    
     reg1 = sdr_read32((volatile u32*)(RALINK_SYSCTL_BASE + 0x1340)) | (0x1<<11); //Normal mode(AP mode) , SDXC CLK=PAD_GPIO0=GPIO11, driving = 8mA
     sdr_write32((volatile u32*)(RALINK_SYSCTL_BASE + 0x1340), reg1);
-
+	
+    reg1 = sdr_read32((volatile u32*)(RALINK_SYSCTL_BASE + 0x1350)) | (0x1<<11); 
+    sdr_write32((volatile u32*)(RALINK_SYSCTL_BASE + 0x1350), reg1);
+	
 
 #endif
 #if defined (CONFIG_MTK_MMC_EMMC_8BIT)
